@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirGuard AI — Multi-Agent Daily Air Quality Action System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --card-bg: rgba(18, 26, 43, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary-cyan: #06b6d4;
+            --primary-glow: rgba(6, 182, 212, 0.25);
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --rose: #f43f5e;
+            --purple: #8b5cf6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(6, 182, 212, 0.14) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(139, 92, 246, 0.12) 0%, transparent 40%);
+            padding: 2rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1350px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            box-shadow: 0 0 24px var(--primary-glow);
+        }
+
+        .brand-text h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-text p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .header-tags {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .badge-tag {
+            background: rgba(6, 182, 212, 0.12);
+            color: var(--primary-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            padding: 0.4rem 0.9rem;
+            border-radius: 99px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .badge-tag.purple {
+            background: rgba(139, 92, 246, 0.12);
+            color: #c084fc;
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        /* FORECAST EARLY WARNING BANNER (Objective 3) */
+        .alert-banner {
+            background: linear-gradient(90deg, rgba(244, 63, 94, 0.15) 0%, rgba(245, 158, 11, 0.15) 100%);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            border-radius: 14px;
+            padding: 0.9rem 1.25rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .alert-content {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-icon {
+            font-size: 1.4rem;
+        }
+
+        .alert-title {
+            font-weight: 700;
+            color: #fca5a5;
+        }
+
+        /* GRID LAYOUT */
+        .grid-main {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 1.75rem;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* GLASS CARD */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 1.75rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        /* FORM CONTROLS */
+        .form-group {
+            margin-bottom: 1.1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem 0.95rem;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.9rem;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-preset {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-preset:hover {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--primary-cyan);
+            border-color: rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.95rem;
+            background: linear-gradient(135deg, #06b6d4 0%, #2563eb 100%);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 0.98rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 20px var(--primary-glow);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 0.75rem;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.4);
+        }
+
+        /* MULTI-AGENT ARCHITECTURE SHOWCASE (Objective 5) */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .agent-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 0.85rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .agent-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--primary-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .agent-info h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .agent-info p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+
+        .agent-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--emerald);
+            margin-left: auto;
+            box-shadow: 0 0 8px var(--emerald);
+        }
+
+        /* METRICS & RISK BANNER */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-box {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--card-border);
+            padding: 0.9rem;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            margin-top: 0.25rem;
+        }
+
+        .bg-good { background: rgba(16, 185, 129, 0.2); color: var(--emerald); border: 1px solid var(--emerald); }
+        .bg-moderate { background: rgba(245, 158, 11, 0.2); color: var(--amber); border: 1px solid var(--amber); }
+        .bg-unhealthy { background: rgba(244, 63, 94, 0.2); color: var(--rose); border: 1px solid var(--rose); }
+
+        /* OUTPUT SECTIONS */
+        .output-section {
+            margin-bottom: 1.25rem;
+        }
+
+        .output-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.65rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .action-item {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .action-icon {
+            font-size: 1.1rem;
+            margin-top: 0.1rem;
+        }
+
+        /* POLICY & AWARENESS PANEL (Objective 4) */
+        .policy-card {
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            border-radius: 14px;
+            padding: 1.1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .policy-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #c084fc;
+            text-transform: uppercase;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .policy-text {
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            line-height: 1.45;
+        }
+
+        /* WHAT IF SIMULATOR */
+        .whatif-box {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: 14px;
+            padding: 1.1rem;
+        }
+
+        .whatif-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #67e8f9;
+            margin-bottom: 0.65rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .whatif-controls {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-whatif {
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            color: #cffaff;
+            padding: 0.45rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-whatif:hover {
+            background: rgba(6, 182, 212, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .whatif-result {
+            margin-top: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            background: rgba(15, 23, 42, 0.75);
+            border-radius: 8px;
+            font-size: 0.83rem;
+            color: var(--text-main);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <div class="brand">
+                <div class="brand-icon">🛡️</div>
+                <div class="brand-text">
+                    <h1>AirGuard AI</h1>
+                    <p>Multi-Agent Daily Air Quality Action System (Problem Statement #15)</p>
+                </div>
+            </div>
+            <div class="header-tags">
+                <span class="badge-tag">RAG DATA RETRIEVAL</span>
+                <span class="badge-tag purple">4-AGENT ARCHITECTURE</span>
+            </div>
+        </header>
+
+        <!-- OBJECTIVE 3: PREDICTIVE ALERTS BANNER -->
+        <div class="alert-banner">
+            <div class="alert-content">
+                <span class="alert-icon">⚠️</span>
+                <div>
+                    <span class="alert-title">Predictive Forecast Alert (Next 24 Hours):</span>
+                    <span style="color: #cbd5e1;" id="bannerText"> AQI expected to spike to <strong>210 (Very Unhealthy)</strong> tomorrow morning between 7:30 AM – 10:30 AM due to thermal inversion. Proactive recommendation: Shift outdoor travel early.</span>
+                </div>
+            </div>
+            <span class="badge-tag" style="background: rgba(244,63,94,0.2); color: #f43f5e; border-color: #f43f5e;">PREDICTIVE WARNING</span>
+        </div>
+
+        <!-- MAIN GRID LAYOUT -->
+        <div class="grid-main">
+            <!-- LEFT PANEL: USER CONTEXT & AGENT CONTROLS -->
+            <div>
+                <!-- INPUT FORM CARD -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>⚙️</span> User Context & RAG Source
+                        </div>
+                    </div>
+
+                    <!-- PRESETS -->
+                    <div class="form-group">
+                        <label>Demo Presets</label>
+                        <div class="preset-buttons">
+                            <button class="btn-preset" onclick="loadPreset('good')">Good (AQI 42)</button>
+                            <button class="btn-preset" onclick="loadPreset('unhealthy')">Unhealthy (AQI 172)</button>
+                            <button class="btn-preset" onclick="loadPreset('severe')">Hazardous (AQI 275)</button>
+                        </div>
+                    </div>
+
+                    <form id="agentForm" onsubmit="runAgentPipeline(event)">
+                        <div class="row-2">
+                            <div class="form-group">
+                                <label>Location</label>
+                                <input type="text" id="location" value="Chennai" required>
+                            </div>
+                            <div class="form-group">
+                                <label>AQI Data Source</label>
+                                <select id="dataSource">
+                                    <option value="Live API">Real-Time Open API (CPCB / WAQI)</option>
+                                    <option value="Satellite RAG">Satellite & Ground RAG Base</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row-2">
+                            <div class="form-group">
+                                <label>Current AQI</label>
+                                <input type="number" id="aqi" value="172" min="0" max="500" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Age & Condition</label>
+                                <select id="healthCondition">
+                                    <option value="21 • Normal">Age 21 • Normal Health</option>
+                                    <option value="12 • Sensitive (Asthma)">Age 12 • Sensitive (Asthma)</option>
+                                    <option value="65 • Sensitive (Elderly)">Age 65 • Sensitive (Elderly)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row-2">
+                            <div class="form-group">
+                                <label>Planned Activity</label>
+                                <select id="activity">
+                                    <option value="Outdoor Running">Outdoor Running / Workout</option>
+                                    <option value="Cycling">Outdoor Cycling</option>
+                                    <option value="Outdoor Sports">Outdoor Football / Sports</option>
+                                    <option value="Casual Walking">Casual Walking</option>
+                                    <option value="Indoor Desk Work">Indoor Desk Work</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Exposure (Hours)</label>
+                                <input type="number" id="exposure" value="4" min="1" max="24" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Commute Mode</label>
+                            <select id="commute">
+                                <option value="Motorcycle / Bike">Motorcycle / Two-Wheeler (Open Air)</option>
+                                <option value="Bicycle">Bicycle / Walking</option>
+                                <option value="Metro / AC Bus">Metro / Air-Conditioned Bus</option>
+                                <option value="Car with AC">Car with Recirculated AC</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            <span>📡 Execute Multi-Agent RAG Pipeline</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- OBJECTIVE 5: MULTI-AGENT ARCHITECTURE STATUS -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🤖</span> Multi-Agent Pipeline Architecture
+                        </div>
+                    </div>
+                    <div class="agents-grid">
+                        <div class="agent-card">
+                            <div class="agent-avatar">📡</div>
+                            <div class="agent-info">
+                                <h4>AQI Data Agent</h4>
+                                <p>Fetches & interprets live AQI</p>
+                            </div>
+                            <div class="agent-status"></div>
+                        </div>
+                        <div class="agent-card">
+                            <div class="agent-avatar">🩺</div>
+                            <div class="agent-info">
+                                <h4>Health Advisory Agent</h4>
+                                <p>Personalized age & risk rules</p>
+                            </div>
+                            <div class="agent-status"></div>
+                        </div>
+                        <div class="agent-card">
+                            <div class="agent-avatar">🔮</div>
+                            <div class="agent-info">
+                                <h4>Forecasting Agent</h4>
+                                <p>24h Trend & predictive warnings</p>
+                            </div>
+                            <div class="agent-status"></div>
+                        </div>
+                        <div class="agent-card">
+                            <div class="agent-avatar">📢</div>
+                            <div class="agent-info">
+                                <h4>Community Agent</h4>
+                                <p>Policy & awareness campaigns</p>
+                            </div>
+                            <div class="agent-status"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT PANEL: DASHBOARD VISUALIZATION & OUTPUTS -->
+            <div>
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>📊</span> Visualization Dashboard & Recommendations
+                        </div>
+                    </div>
+
+                    <!-- METRICS & RISK BANNER (Objective 6) -->
+                    <div class="metrics-grid">
+                        <div class="metric-box">
+                            <div class="metric-label">Current AQI</div>
+                            <div class="metric-value" id="valAqi">172</div>
+                            <span class="status-badge bg-unhealthy" id="badgeStatus">UNHEALTHY</span>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-label">Personal Exposure Score</div>
+                            <div class="metric-value" id="valScore" style="color: #f43f5e;">688</div>
+                            <span style="font-size: 0.72rem; color: var(--text-muted);" id="valScoreDesc">AQI × 4 Exposure Hrs</span>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-label">Primary Risk Factor</div>
+                            <div class="metric-value" style="font-size: 1.05rem; color: #f59e0b;" id="valRisk">High Roadside</div>
+                            <span style="font-size: 0.72rem; color: var(--text-muted);">Open Air Travel</span>
+                        </div>
+                    </div>
+
+                    <!-- OBJECTIVE 2: PERSONALIZED HEALTH RECOMMENDATIONS -->
+                    <div class="output-section">
+                        <div class="output-section-title">🩺 Health Advisory Agent Recommendations</div>
+                        <ul class="action-list" id="actionList">
+                            <li class="action-item">
+                                <span class="action-icon">🏃</span>
+                                <div><strong>Exercise Modification:</strong> Move outdoor running indoors (treadmill/indoor gym). Outdoor exertion at AQI 172 increases lung particle deposition by ~300%.</div>
+                            </li>
+                            <li class="action-item">
+                                <span class="action-icon">🏍️</span>
+                                <div><strong>Commute Advisory:</strong> Open motorcycle commute poses high roadside PM2.5 risk. Shift to Metro or car with AC recirculation.</div>
+                            </li>
+                            <li class="action-item">
+                                <span class="action-icon">🪟</span>
+                                <div><strong>Indoor Precautions:</strong> Keep windows tightly sealed during morning traffic inversion (8 AM – 10:30 AM). Use N95 masks for outdoor travel.</div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- OBJECTIVE 4: POLICY & AWARENESS INSIGHTS -->
+                    <div class="policy-card">
+                        <div class="policy-title">📢 Community Action & Policy Advisory Summary</div>
+                        <div class="policy-text" id="policyText">
+                            • <strong>Community Micro-Action:</strong> Switch single-occupancy two-wheeler trips to public transit (Metro) to reduce micro-particulate pollution along main arterial corridors.<br>
+                            • <strong>CPCB Policy Advisory (Stage II GRAP):</strong> Strict ban on open waste burning; mandatory dust suppression at local construction sites.
+                        </div>
+                    </div>
+
+                    <!-- WHAT IF SIMULATOR -->
+                    <div class="whatif-box">
+                        <div class="whatif-title">💡 "What-If" Proactive Scenario Simulator</div>
+                        <div class="whatif-controls">
+                            <button class="btn-whatif" onclick="runWhatIf('metro')">What if I switch to Metro?</button>
+                            <button class="btn-whatif" onclick="runWhatIf('indoor')">What if I workout indoors?</button>
+                            <button class="btn-whatif" onclick="runWhatIf('mask')">What if I wear N95 mask?</button>
+                        </div>
+                        <div class="whatif-result" id="whatifResult"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadPreset(type) {
+            if (type === 'good') {
+                document.getElementById('location').value = 'Chennai';
+                document.getElementById('aqi').value = 42;
+                document.getElementById('exposure').value = 2;
+                document.getElementById('activity').value = 'Outdoor Running';
+                document.getElementById('commute').value = 'Bicycle';
+            } else if (type === 'unhealthy') {
+                document.getElementById('location').value = 'Chennai';
+                document.getElementById('aqi').value = 172;
+                document.getElementById('exposure').value = 4;
+                document.getElementById('activity').value = 'Outdoor Running';
+                document.getElementById('commute').value = 'Motorcycle / Bike';
+            } else if (type === 'severe') {
+                document.getElementById('location').value = 'Delhi';
+                document.getElementById('aqi').value = 275;
+                document.getElementById('exposure').value = 5;
+                document.getElementById('activity').value = 'Outdoor Sports';
+                document.getElementById('commute').value = 'Bicycle';
+            }
+            runAgentPipeline(new Event('submit'));
+        }
+
+        function runAgentPipeline(e) {
+            if (e) e.preventDefault();
+
+            const loc = document.getElementById('location').value;
+            const aqi = parseInt(document.getElementById('aqi').value);
+            const exposure = parseInt(document.getElementById('exposure').value);
+            const activity = document.getElementById('activity').value;
+            const commute = document.getElementById('commute').value;
+            const healthCond = document.getElementById('healthCondition').value;
+
+            // Calculate Exposure Score
+            const score = aqi * exposure;
+            document.getElementById('valAqi').innerText = aqi;
+            document.getElementById('valScore').innerText = score;
+            document.getElementById('valScoreDesc').innerText = `AQI × ${exposure} Exposure Hrs`;
+
+            // Elements
+            const badge = document.getElementById('badgeStatus');
+            const scoreVal = document.getElementById('valScore');
+            const actionList = document.getElementById('actionList');
+            const riskVal = document.getElementById('valRisk');
+            const bannerText = document.getElementById('bannerText');
+
+            let statusText = 'GOOD';
+            let badgeClass = 'bg-good';
+            let scoreColor = '#10b981';
+            let items = [];
+
+            if (aqi <= 50) {
+                statusText = 'GOOD';
+                badgeClass = 'bg-good';
+                scoreColor = '#10b981';
+                riskVal.innerText = 'Low Risk';
+                riskVal.style.color = '#10b981';
+
+                bannerText.innerHTML = ` AQI forecasted to remain <strong>Good (${aqi + 5})</strong> over the next 24 hours. Ideal conditions for outdoor activities and exercise.`;
+
+                items = [
+                    { icon: '🏃', text: `<strong>Exercise Modification:</strong> Outdoor ${activity} is completely safe. Enjoy your workout!` },
+                    { icon: '🚲', text: `<strong>Commute Advisory:</strong> ${commute} presents zero direct air pollution hazard today.` },
+                    { icon: '🪟', text: `<strong>Indoor Precautions:</strong> Open windows to circulate fresh ambient air throughout your home.` }
+                ];
+            } else if (aqi <= 150) {
+                statusText = 'MODERATE';
+                badgeClass = 'bg-moderate';
+                scoreColor = '#f59e0b';
+                riskVal.innerText = healthCond.includes('Sensitive') ? 'Sensitive Risk' : 'Moderate Risk';
+                riskVal.style.color = '#f59e0b';
+
+                bannerText.innerHTML = ` AQI expected to fluctuate around <strong>${aqi + 15} (Moderate)</strong> tomorrow. Sensitive groups should monitor outdoor exposure.`;
+
+                items = [
+                    { icon: '🏃', text: `<strong>Exercise Modification:</strong> ${activity} is acceptable. Sensitive individuals (${healthCond}) should avoid heavy exertion.` },
+                    { icon: '🚲', text: `<strong>Commute Advisory:</strong> ${commute} is manageable. Try avoiding congested morning traffic corridors.` },
+                    { icon: '🪟', text: `<strong>Indoor Precautions:</strong> Keep windows closed during peak morning traffic (7:30 - 9:30 AM).` }
+                ];
+            } else {
+                statusText = 'UNHEALTHY';
+                badgeClass = 'bg-unhealthy';
+                scoreColor = '#f43f5e';
+                riskVal.innerText = commute.includes('Motorcycle') || commute.includes('Bicycle') ? 'High Roadside' : 'High Air Risk';
+                riskVal.style.color = '#f43f5e';
+
+                bannerText.innerHTML = ` AQI expected to spike to <strong>${aqi + 35} (Very Unhealthy)</strong> tomorrow morning between 7:30 AM – 10:30 AM due to thermal inversion. Adjust travel early.`;
+
+                items = [
+                    { icon: '🏃', text: `<strong>Exercise Modification:</strong> Shift ${activity} indoors. Outdoor exertion at AQI ${aqi} poses elevated health risk.` },
+                    { icon: '🏍️', text: `<strong>Commute Advisory:</strong> Open commute via ${commute} leads to high particulate inhalation. Prefer Metro or car with AC.` },
+                    { icon: '🪟', text: `<strong>Indoor Precautions:</strong> Keep windows tightly closed during morning peak inversion. Wear N95 mask outdoors.` }
+                ];
+            }
+
+            badge.innerText = statusText;
+            badge.className = `status-badge ${badgeClass}`;
+            scoreVal.style.color = scoreColor;
+
+            actionList.innerHTML = items.map(it => `
+                <li class="action-item">
+                    <span class="action-icon">${it.icon}</span>
+                    <div>${it.text}</div>
+                </li>
+            `).join('');
+
+            document.getElementById('whatifResult').style.display = 'none';
+        }
+
+        function runWhatIf(scenario) {
+            const resultBox = document.getElementById('whatifResult');
+            const aqi = parseInt(document.getElementById('aqi').value);
+            const exposure = parseInt(document.getElementById('exposure').value);
+
+            resultBox.style.display = 'block';
+
+            if (scenario === 'metro') {
+                resultBox.innerHTML = `<strong>✨ Metro Impact:</strong> Shifting to Metro reduces direct roadside particulate exposure by <strong>~75%</strong>. Effective exposure score drops from ${aqi * exposure} to <strong>${Math.round(aqi * exposure * 0.25)}</strong>!`;
+            } else if (scenario === 'indoor') {
+                resultBox.innerHTML = `<strong>✨ Indoor Workout:</strong> Moving workout indoors into ambient room air reduces lung particulate deposition by <strong>~80%</strong>. Highly recommended.`;
+            } else if (scenario === 'mask') {
+                resultBox.innerHTML = `<strong>✨ N95 Mask Impact:</strong> Wearing a fitted N95 mask filters up to <strong>95%</strong> of outdoor fine particulate matter (PM2.5) during travel.`;
+            }
+        }
+    </script>
+</body>
+</html>

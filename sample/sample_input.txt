@@ -1,0 +1,55 @@
+====================================================================
+AIRGUARD AI — DEMO TEST SCENARIOS & SAMPLE INPUTS
+====================================================================
+
+SCENARIO 1: Good Air Quality Day (Low Risk Demo)
+--------------------------------------------------------------------
+Location: Chennai
+AQI: 42
+Age: 21
+Activity: Outdoor jogging
+Commute: Bicycle
+Outdoor exposure: 2 hours
+
+Expected AI Behavior:
+- Status: Good (0-50)
+- Exposure Score: 84 (Low Risk)
+- Action Plan: Safe for outdoor workouts, no commute adjustments needed, windows can remain open.
+
+
+SCENARIO 2: Unhealthy Air Quality Day (Moderate/High Risk Demo - Primary Pitch Scenario)
+--------------------------------------------------------------------
+Location: Chennai
+AQI: 172
+Age: 21
+Activity: Outdoor running
+Commute: Motorcycle
+Outdoor exposure: 4 hours
+
+Expected AI Behavior:
+- Status: Unhealthy (151-200)
+- Exposure Score: 688 (Severe Exposure Risk)
+- Action Plan:
+  1. Move outdoor running to indoor gym/treadmill.
+  2. Commute risk alert: High direct particulate exposure on motorcycle; recommend shifting to Metro/Bus or car with AC.
+  3. Keep indoor windows closed during peak morning traffic.
+  4. Community Action: Carpool or use public transit to lower local roadside emissions.
+
+
+SCENARIO 3: Very Unhealthy / Severe Day (Critical Risk Demo)
+--------------------------------------------------------------------
+Location: Delhi / North India Winter
+AQI: 275
+Age: 28
+Activity: Outdoor football match
+Commute: Walking / Open Auto
+Outdoor exposure: 5 hours
+
+Expected AI Behavior:
+- Status: Very Unhealthy (201-300)
+- Exposure Score: 1375 (Critical Exposure Risk)
+- Action Plan:
+  1. Cancel outdoor sports match immediately.
+  2. Avoid non-essential outdoor travel; wear N95 mask if outdoors.
+  3. Turn on HEPA air purifiers indoors.
+  4. What-If Scenario: "What if I play indoors instead?" -> Exposure Score drops safely to indoor ambient level.

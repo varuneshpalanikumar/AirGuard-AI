@@ -1,0 +1,98 @@
+{
+  "name": "AirGuard AI - Daily Air Quality Action Agent Flow",
+  "description": "Agentic RAG pipeline converting AQI data and personal context into daily actionable recommendations using IBM Granite 4.0 8B Instruct and Chroma Vector Store.",
+  "nodes": [
+    {
+      "id": "chat_input_1",
+      "type": "ChatInput",
+      "data": {
+        "label": "Chat Input",
+        "description": "Accepts user location, AQI, age, activity, commute method, and outdoor exposure duration.",
+        "input_types": ["Text"]
+      }
+    },
+    {
+      "id": "file_loader_1",
+      "type": "File",
+      "data": {
+        "label": "File Loader",
+        "path": "knowledge/air_quality_guidelines.txt",
+        "description": "Loads the curated air quality guideline document for RAG retrieval."
+      }
+    },
+    {
+      "id": "text_splitter_1",
+      "type": "RecursiveCharacterTextSplitter",
+      "data": {
+        "label": "Text Splitter",
+        "chunk_size": 400,
+        "chunk_overlap": 50,
+        "description": "Splits guidelines into chunks for vector indexing."
+      }
+    },
+    {
+      "id": "embedding_1",
+      "type": "HuggingFaceEmbeddings",
+      "data": {
+        "label": "Text Embedder",
+        "model_name": "all-MiniLM-L6-v2",
+        "description": "Converts knowledge chunks into high-dimensional vector representations."
+      }
+    },
+    {
+      "id": "vector_store_1",
+      "type": "Chroma",
+      "data": {
+        "label": "Vector Store (ChromaDB)",
+        "description": "Stores guideline embeddings for similarity search."
+      }
+    },
+    {
+      "id": "retriever_1",
+      "type": "VectorStoreRetriever",
+      "data": {
+        "label": "RAG Retriever",
+        "search_k": 3,
+        "description": "Retrieves top 3 relevant guidelines matching the user's AQI and activity query."
+      }
+    },
+    {
+      "id": "prompt_template_1",
+      "type": "PromptTemplate",
+      "data": {
+        "label": "Agentic Prompt Template",
+        "template": "You are AirGuard AI, an intelligent air-quality action planning assistant.\n\nUser input: {user_input}\nRetrieved Guidelines: {context}\n\nTasks:\n1. Analyze AQI severity & Personal Exposure Score (AQI x Hours).\n2. Provide structured TODAY'S ACTION PLAN for exercise, commute, and windows.\n3. Give personalized health advisories.\n4. Provide 1 actionable community recommendation.\n\nStructure response cleanly with headers.",
+        "description": "Combines user context and RAG retrieved context for model execution."
+      }
+    },
+    {
+      "id": "granite_llm_1",
+      "type": "GraniteLLM",
+      "data": {
+        "label": "IBM Granite 4.0 8B Instruct",
+        "model_name": "granite-4.0-8b-instruct",
+        "temperature": 0.2,
+        "description": "Instruction-tuned reasoning LLM producing structured action plans."
+      }
+    },
+    {
+      "id": "chat_output_1",
+      "type": "ChatOutput",
+      "data": {
+        "label": "Chat Output",
+        "description": "Displays the final personalized daily action plan to the user."
+      }
+    }
+  ],
+  "edges": [
+    { "source": "file_loader_1", "target": "text_splitter_1" },
+    { "source": "text_splitter_1", "target": "vector_store_1" },
+    { "source": "embedding_1", "target": "vector_store_1" },
+    { "source": "chat_input_1", "target": "retriever_1" },
+    { "source": "vector_store_1", "target": "retriever_1" },
+    { "source": "retriever_1", "target": "prompt_template_1" },
+    { "source": "chat_input_1", "target": "prompt_template_1" },
+    { "source": "prompt_template_1", "target": "granite_llm_1" },
+    { "source": "granite_llm_1", "target": "chat_output_1" }
+  ]
+}

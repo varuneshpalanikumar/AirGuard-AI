@@ -1,0 +1,65 @@
+====================================================================
+AIRGUARD AI — OFFICIAL AIR QUALITY ACTION GUIDELINES & RAG KNOWLEDGE BASE
+====================================================================
+
+1. AIR QUALITY INDEX (AQI) BREAKDOWN & HEALTH IMPACTS
+--------------------------------------------------------------------
+• AQI 0 - 50 (Good):
+  - Air quality is considered satisfactory, and air pollution poses little or no risk.
+  - Recommended Actions: Enjoy outdoor activities normally. Open windows for fresh air ventilation. Ideal for outdoor running, cycling, and sports.
+
+• AQI 51 - 100 (Moderate):
+  - Air quality is acceptable; however, for some pollutants there may be a moderate health concern for a very small number of individuals who are unusually sensitive to air pollution.
+  - Recommended Actions: Sensitive groups (asthma, elderly, young children) should consider reducing prolonged or heavy outdoor exertion. General public can continue normal activities.
+
+• AQI 101 - 150 (Unhealthy for Sensitive Groups):
+  - Members of sensitive groups may experience health effects. The general public is less likely to be affected.
+  - Recommended Actions: Children, elderly, and individuals with respiratory/cardiovascular issues should limit prolonged outdoor exertion. Move intensive outdoor workouts indoors. Keep windows closed during peak traffic hours.
+
+• AQI 151 - 200 (Unhealthy):
+  - Everyone may begin to experience health effects; members of sensitive groups may experience more serious health effects.
+  - Recommended Actions: Everyone should significantly reduce prolonged outdoor exertion. Switch high-intensity outdoor exercises (running, football) to indoor alternatives (treadmill, gym, yoga). Commuters should prefer air-conditioned public transport (Metro/Bus) over open two-wheelers/bikes or walking along high-traffic corridors. Use N95 masks if outdoor travel is unavoidable.
+
+• AQI 201 - 300 (Very Unhealthy):
+  - Health alert: Everyone may experience more serious health effects.
+  - Recommended Actions: Avoid prolonged outdoor activities completely. Move all fitness sessions indoors. Keep indoor air clean using HEPA air purifiers or sealed windows. Wear N95/FFP2 masks during any essential outdoor travel. Minimise roadside commute exposure.
+
+• AQI 301+ (Hazardous):
+  - Health warnings of emergency conditions. The entire population is likely to be affected.
+  - Recommended Actions: Avoid all unnecessary outdoor exposure. Keep children, elderly, and pets strictly indoors. Operate air purifiers continuously. Follow official emergency government health advisories.
+
+
+2. EXPOSURE & COMMUTE RISK FACTORS
+--------------------------------------------------------------------
+• Commute Mode Risk Profiles:
+  - Open Two-Wheeler / Bike / Walking: Highest direct exposure to particulate matter (PM2.5 / PM10) and roadside vehicle exhaust emissions.
+  - Car with Recirculation AC: Moderate to low exposure; cabin filters reduce particulate concentrations.
+  - Metro / Air-Conditioned Bus: Low direct exposure per passenger; environmentally friendly choice during severe pollution episodes.
+
+• Personal Exposure Score Formula (Prototype Metric):
+  - Formula: Exposure Score = Current AQI × Total Planned Outdoor Exposure Hours.
+  - Severity Classification:
+    * 0 - 150: Low Exposure Risk
+    * 151 - 300: Moderate Exposure Risk
+    * 301 - 500: High Exposure Risk
+    * 500+: Severe / Critical Exposure Risk
+
+
+3. RECOMMENDED INDOOR PRECAUTIONS & LIFESTYLE ADAPTATIONS
+--------------------------------------------------------------------
+- Window Management: Keep windows closed during peak morning (7:00 AM - 10:30 AM) and evening (6:00 PM - 9:00 PM) traffic hours when particulate inversion is highest.
+- Air Purification: Utilize HEPA-filter air purifiers or DIY indoor air filtration systems in primary living spaces.
+- Hydration & Diet: Maintain high fluid intake and antioxidant-rich foods to help combat oxidisation caused by particulate exposure.
+
+
+4. COMMUNITY ACTION & POLLUTION REDUCTION ADVISORIES
+--------------------------------------------------------------------
+- Commute Efficiency: Opt for carpooling or public transit (Metro) to reduce single-occupancy vehicle emissions.
+- Waste Management: Avoid burning leaves, garbage, or organic waste outdoors.
+- Eco-Friendly Driving: Avoid prolonged vehicle idling at signals or traffic jams.
+
+
+====================================================================
+DISCLAIMER:
+AirGuard AI provides general health and lifestyle recommendations based on environmental guidelines. It does NOT constitute professional medical diagnosis or replace official government emergency alerts.
+====================================================================
